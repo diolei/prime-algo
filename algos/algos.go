@@ -1,0 +1,121 @@
+package algos
+
+import "math"
+
+func LinearSearch(haystack []int, needle int) bool {
+	for _, value := range haystack {
+		if value == needle {
+			return true
+		}
+	}
+	return false
+}
+
+func BinarySearch(haystack []int, needle int) bool {
+	low := 0
+	high := len(haystack) - 1
+	for high >= low {
+		middle := (low + high) / 2
+		if needle == haystack[middle] {
+			return true
+		} else if needle < haystack[middle] {
+			high = middle - 1
+		} else {
+			low = middle + 1
+		}
+	}
+	return false
+}
+
+func twoCrystalBalls(breaks []bool) int {
+	jump_amount := math.Floor(math.Sqrt(float64(len(breaks))))
+
+	i := int(jump_amount)
+	for ; i < len(breaks); i += int(jump_amount) {
+		if breaks[i] {
+			break
+		}
+	}
+	i -= int(jump_amount)
+
+	for j := 0; j <= int(jump_amount) && i < len(breaks); i, j = i+1, j+1 {
+		if breaks[i] {
+			return i
+		}
+	}
+	return -1
+}
+
+func bubbleSort(array []int) {
+	// keep track of last index
+	for i := 0; i < len(array); i++ {
+		// -1 to not go out of bounds, - i to discard last element
+		for j := 0; j < len(array)-1-i; j++ {
+			if array[j] > array[j+1] {
+				tmp := array[j]
+				array[j] = array[j+1]
+				array[j+1] = tmp
+			}
+		}
+	}
+}
+
+type Point struct {
+	x int
+	y int
+}
+
+var dir = [][]int{
+	{-1, 0}, // Left
+	{1, 0},  // Right
+	{0, -1}, // Up
+	{0, 1},  // Down
+}
+
+func mazeSolver(maze []string, wall string, start Point, end Point) []Point {
+	seen := make([][]bool, len(maze))
+	for i := range seen {
+		seen[i] = make([]bool, len(maze[0]))
+	}
+	path := make([]Point, 0)
+
+	_, path = walk(maze, wall, start, end, seen, path)
+	return path
+}
+
+func walk(maze []string, wall string, current Point, end Point, seen [][]bool, path []Point) (bool, []Point) {
+	// 1. Off the map
+	if current.x < 0 || current.x >= len(maze[0]) || current.y < 0 || current.y >= len(maze) {
+		return false, path
+	}
+	// 2. On a wall
+	if string(maze[current.y][current.x]) == wall {
+		return false, path
+	}
+	// 3. End reached
+	if current.x == end.x && current.y == end.y {
+		path = append(path, end)
+		return true, path
+	}
+	// 4. Seen
+	if seen[current.y][current.x] {
+		return false, path
+	}
+
+	// Pre
+	seen[current.y][current.x] = true
+	path = append(path, current)
+
+	// Recurse
+	for i := 0; i < len(dir); i++ {
+		x, y := dir[i][0], dir[i][1]
+		if ok, updated_path := walk(maze, wall, Point{x: current.x + x, y: current.y + y}, end, seen, path); ok {
+			return true, updated_path
+		}
+	}
+
+	// Post
+	path = path[:len(path)-1]
+
+	return false, path
+}
