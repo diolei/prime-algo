@@ -150,3 +150,37 @@ func TestMazeSolver(t *testing.T) {
 		t.Errorf("Test failed. Expected %v, got %v", expected, result)
 	}
 }
+
+func TestQuickSort(t *testing.T) {
+	// Test case with unsorted array
+	input := []int{3, 2, 1}
+	QuickSort(input)
+	expected := []int{1, 2, 3}
+	if !reflect.DeepEqual(input, expected) {
+		t.Errorf("QuickSort(%v) = %v; want %v", input, input, expected)
+	}
+
+	// Test case with partially sorted array
+	input = []int{5, 1, 4, 2, 8}
+	QuickSort(input)
+	expected = []int{1, 2, 4, 5, 8}
+	if !reflect.DeepEqual(input, expected) {
+		t.Errorf("QuickSort(%v) = %v; want %v", input, input, expected)
+	}
+
+	// Test case with already sorted array
+	input = []int{1, 2, 3, 4, 5}
+	QuickSort(input)
+	expected = []int{1, 2, 3, 4, 5}
+	if !reflect.DeepEqual(input, expected) {
+		t.Errorf("QuickSort(%v) = %v; want %v", input, input, expected)
+	}
+
+	// Test case with an empty array
+	input = []int{}
+	QuickSort(input)
+	expected = []int{}
+	if !reflect.DeepEqual(input, expected) {
+		t.Errorf("QuickSort(%v) = %v; want %v", input, input, expected)
+	}
+}

@@ -52,9 +52,7 @@ func bubbleSort(array []int) {
 		// -1 to not go out of bounds, - i to discard last element
 		for j := 0; j < len(array)-1-i; j++ {
 			if array[j] > array[j+1] {
-				tmp := array[j]
-				array[j] = array[j+1]
-				array[j+1] = tmp
+				array[j+1], array[j] = array[j], array[j+1]
 			}
 		}
 	}
@@ -118,4 +116,33 @@ func walk(maze []string, wall string, current Point, end Point, seen [][]bool, p
 	path = path[:len(path)-1]
 
 	return false, path
+}
+
+// Partition: Fetches the pivot index and moves items to right or left
+func partition(array []int, low, high int) ([]int, int) {
+	pivot := array[high]
+	index := low
+	for i := low; i < high; i++ {
+		if array[i] < pivot {
+			array[index], array[i] = array[i], array[index]
+			index++
+		}
+	}
+	array[index], array[high] = array[high], array[index]
+	return array, index
+}
+
+// Quick Sort: Calls the partition function and recurses
+func qs(array []int, low, high int) []int {
+	if low < high {
+		var pivot_index int
+		array, pivot_index = partition(array, low, high)
+		array = qs(array, low, pivot_index-1)
+		array = qs(array, pivot_index+1, high)
+	}
+	return array
+}
+
+func QuickSort(array []int) {
+	qs(array, 0, len(array)-1)
 }
