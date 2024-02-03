@@ -99,3 +99,59 @@ func TestMultiplePushAndPop(t *testing.T) {
 		t.Errorf("Expected 15, 10, 5, got %v, %v, %v", val_1, val_2, val_3)
 	}
 }
+
+func TestPrepend(t *testing.T) {
+	dll := &DoublyLinkedList{}
+	dll.Prepend(1)
+	if dll.length != 1 || dll.head.value != 1 || dll.tail.value != 1 {
+		t.Errorf("Failed to prepend node to empty list")
+	}
+	dll.Prepend(2)
+	if dll.length != 2 || dll.head.value != 2 || dll.head.next.value != 1 {
+		t.Errorf("Failed to prepend node to non-empty list")
+	}
+}
+
+func TestAppend(t *testing.T) {
+	dll := &DoublyLinkedList{}
+	dll.Append(1)
+	if dll.length != 1 || dll.head.value != 1 || dll.tail.value != 1 {
+		t.Errorf("Failed to append node to empty list")
+	}
+	dll.Append(2)
+	if dll.length != 2 || dll.head.value != 1 || dll.tail.value != 2 {
+		t.Errorf("Failed to append node to non-empty list")
+	}
+}
+
+func TestRemove(t *testing.T) {
+	dll := &DoublyLinkedList{}
+	dll.Append(1)
+	dll.Append(2)
+	_, err := dll.Remove(1)
+	if err != nil {
+		t.Errorf("Failed to remove existing node: %v", err)
+	}
+	if dll.length != 1 || dll.head.value != 2 {
+		t.Errorf("Failed to remove node correctly")
+	}
+}
+
+func TestInsertAt(t *testing.T) {
+	dll := &DoublyLinkedList{}
+	err := dll.InsertAt(1, 0)
+	if err != nil {
+		t.Errorf("Failed to insert at beginning: %v", err)
+	}
+	err = dll.InsertAt(2, 1)
+	if err != nil {
+		t.Errorf("Failed to insert at middle: %v", err)
+	}
+	err = dll.InsertAt(3, 2)
+	if err != nil {
+		t.Errorf("Failed to insert at end: %v", err)
+	}
+	if dll.length != 3 || dll.head.value != 1 || dll.head.next.value != 2 || dll.head.next.next.value != 3 {
+		t.Errorf("Failed to insert at correct positions")
+	}
+}
