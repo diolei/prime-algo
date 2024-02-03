@@ -1,6 +1,21 @@
 package algos
 
-import "math"
+import (
+	"math"
+)
+
+type Point struct {
+	x int
+	y int
+}
+
+
+type BinaryNode struct {
+    value int
+    left *BinaryNode
+    right *BinaryNode
+}
+
 
 func LinearSearch(haystack []int, needle int) bool {
 	for _, value := range haystack {
@@ -58,11 +73,6 @@ func bubbleSort(array []int) {
 	}
 }
 
-type Point struct {
-	x int
-	y int
-}
-
 var dir = [][]int{
 	{-1, 0}, // Left
 	{1, 0},  // Right
@@ -77,11 +87,11 @@ func mazeSolver(maze []string, wall string, start Point, end Point) []Point {
 	}
 	path := make([]Point, 0)
 
-	_, path = walk(maze, wall, start, end, seen, path)
+	_, path = WalkMaze(maze, wall, start, end, seen, path)
 	return path
 }
 
-func walk(maze []string, wall string, current Point, end Point, seen [][]bool, path []Point) (bool, []Point) {
+func WalkMaze(maze []string, wall string, current Point, end Point, seen [][]bool, path []Point) (bool, []Point) {
 	// 1. Off the map
 	if current.x < 0 || current.x >= len(maze[0]) || current.y < 0 || current.y >= len(maze) {
 		return false, path
@@ -107,7 +117,7 @@ func walk(maze []string, wall string, current Point, end Point, seen [][]bool, p
 	// Recurse
 	for i := 0; i < len(dir); i++ {
 		x, y := dir[i][0], dir[i][1]
-		if ok, updated_path := walk(maze, wall, Point{x: current.x + x, y: current.y + y}, end, seen, path); ok {
+		if ok, updated_path := WalkMaze(maze, wall, Point{x: current.x + x, y: current.y + y}, end, seen, path); ok {
 			return true, updated_path
 		}
 	}
@@ -145,4 +155,54 @@ func qs(array []int, low, high int) []int {
 
 func QuickSort(array []int) {
 	qs(array, 0, len(array)-1)
+}
+
+
+func WalkBTPreOrder(current *BinaryNode, path *[]int) {
+    if current == nil {
+        return
+    }
+    // Pre order traversal
+    *path = append(*path, current.value) // 1. Visit node
+    WalkBTPreOrder(current.left, path) // 2. Walk left
+    WalkBTPreOrder(current.right, path) // 3. Walk right
+}
+
+func PreOrderSearch(head *BinaryNode) []int {
+    path := make([]int, 0)
+    WalkBTPreOrder(head, &path)
+    return path
+}
+
+func WalkBTInOrder(current *BinaryNode, path *[]int) {
+    if current == nil {
+        return
+    }
+
+    // In order traversal
+    WalkBTInOrder(current.left, path) //  1. Walk left
+    *path = append(*path, current.value) // 2. Visit node
+    WalkBTInOrder(current.right, path) // 3. Walk right
+}
+
+func InOrderSearch(head *BinaryNode) []int {
+    path := make([]int, 0)
+    WalkBTInOrder(head, &path)
+    return path
+}
+func WalkBTPostOrder(current *BinaryNode, path *[]int) {
+    if current == nil {
+        return
+    }
+
+    // Post order traversal
+    WalkBTPostOrder(current.left, path) // 1. Walk left
+    WalkBTPostOrder(current.right, path) // 2. Walk right
+    *path = append(*path, current.value) // 3. Visit node
+}
+
+func PostOrderSearch(head *BinaryNode) []int {
+    path := make([]int, 0)
+    WalkBTPostOrder(head, &path)
+    return path
 }

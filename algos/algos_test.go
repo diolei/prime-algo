@@ -184,3 +184,30 @@ func TestQuickSort(t *testing.T) {
 		t.Errorf("QuickSort(%v) = %v; want %v", input, input, expected)
 	}
 }
+
+func TestTraversals(t *testing.T) {
+	root := &BinaryNode{value: 1}
+	root.left = &BinaryNode{value: 2}
+	root.right = &BinaryNode{value: 3}
+	root.left.left = &BinaryNode{value: 4}
+	root.left.right = &BinaryNode{value: 5}
+	root.right.left = &BinaryNode{value: 6}
+	root.right.right = &BinaryNode{value: 7}
+
+	// Expected results for pre-order traversal
+	expectedPreOrder := []int{1, 2, 4, 5, 3, 6, 7}
+	// Expected results for in-order traversal
+	expectedInOrder := []int{4, 2, 5, 1, 6, 3, 7}
+	// Expected results for post-order traversal
+	expectedPostOrder := []int{4, 5, 2, 6, 7, 3, 1}
+
+	if !reflect.DeepEqual(PreOrderSearch(root), expectedPreOrder) {
+		t.Errorf("PreOrderSearch failed")
+	}
+	if !reflect.DeepEqual(InOrderSearch(root), expectedInOrder) {
+		t.Errorf("InOrderSearch failed")
+	}
+	if !reflect.DeepEqual(PostOrderSearch(root), expectedPostOrder) {
+		t.Errorf("PostOrderSearch failed")
+	}
+}

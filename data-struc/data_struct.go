@@ -25,6 +25,12 @@ type DoublyLinkedList struct {
 	length int
 }
 
+type BinaryNode struct {
+    value int
+    left *BinaryNode
+    right *BinaryNode
+}
+
 func (q *Queue) PeekQueue() (int, error) {
 	if q.head == nil {
 		return 0, errors.New("Queue is empty")
