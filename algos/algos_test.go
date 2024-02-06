@@ -211,3 +211,96 @@ func TestTraversals(t *testing.T) {
 		t.Errorf("PostOrderSearch failed")
 	}
 }
+
+func TestBFS(t *testing.T) {
+	// Test case where the needle is present in the haystack
+	t.Run("NeedlePresent", func(t *testing.T) {
+		root := &BinaryNode{value: 5}
+		root.left = &BinaryNode{value: 3}
+		root.right = &BinaryNode{value: 7}
+		root.left.left = &BinaryNode{value: 2}
+		root.left.right = &BinaryNode{value: 4}
+		root.right.left = &BinaryNode{value: 6}
+		root.right.right = &BinaryNode{value: 8}
+
+		result := BFS(root, 6)
+		if !result {
+			t.Errorf("Expected true, got %v", result)
+		}
+	})
+
+	// Test case where the needle is not present in the haystack
+	t.Run("NeedleNotPresent", func(t *testing.T) {
+		root := &BinaryNode{value: 5}
+		root.left = &BinaryNode{value: 3}
+		root.right = &BinaryNode{value: 7}
+		root.left.left = &BinaryNode{value: 2}
+		root.left.right = &BinaryNode{value: 4}
+		root.right.left = &BinaryNode{value: 6}
+		root.right.right = &BinaryNode{value: 8}
+
+		result := BFS(root, 9)
+		if result {
+			t.Errorf("Expected false, got %v", result)
+		}
+	})
+
+	// Test case where the haystack is empty
+	t.Run("EmptyTree", func(t *testing.T) {
+		root := &BinaryNode{}
+
+		result := BFS(root, 1)
+		if result {
+			t.Errorf("Expected false, got %v", result)
+		}
+	})
+}
+
+func TestCompareBT(t *testing.T) {
+	// Test case where both trees are empty
+	if !CompareBT(nil, nil) {
+		t.Error("Expected true for both nil trees")
+	}
+
+	// Test case where one tree is empty and the other is not
+	treeA := &BinaryNode{value: 1}
+	if CompareBT(treeA, nil) {
+		t.Error("Expected false when comparing a non-nil tree with a nil tree")
+	}
+	if CompareBT(nil, treeA) {
+		t.Error("Expected false when comparing a nil tree with a non-nil tree")
+	}
+
+	// Test case where trees have different structures but the same set of elements
+	treeB := &BinaryNode{value: 1}
+	treeB.left = &BinaryNode{value: 2}
+	treeB.right = &BinaryNode{value: 3}
+	treeC := &BinaryNode{value: 1}
+	treeC.left = &BinaryNode{value: 3}
+	treeC.right = &BinaryNode{value: 2}
+	if CompareBT(treeB, treeC) {
+		t.Error("Expected false for trees with different structures but same elements")
+	}
+
+	// Test case where trees have different structures and different sets of elements
+	treeD := &BinaryNode{value: 1}
+	treeD.left = &BinaryNode{value: 2}
+	treeD.right = &BinaryNode{value: 3}
+	treeE := &BinaryNode{value: 1}
+	treeE.left = &BinaryNode{value: 4}
+	treeE.right = &BinaryNode{value: 5}
+	if CompareBT(treeD, treeE) {
+		t.Error("Expected false for trees with different structures and different elements")
+	}
+
+	// Test case where trees have the same structure and the same set of elements
+	treeF := &BinaryNode{value: 1}
+	treeF.left = &BinaryNode{value: 2}
+	treeF.right = &BinaryNode{value: 3}
+	treeG := &BinaryNode{value: 1}
+	treeG.left = &BinaryNode{value: 2}
+	treeG.right = &BinaryNode{value: 3}
+	if !CompareBT(treeF, treeG) {
+		t.Error("Expected true for trees with the same structure and elements")
+	}
+}

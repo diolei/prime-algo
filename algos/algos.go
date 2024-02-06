@@ -9,13 +9,11 @@ type Point struct {
 	y int
 }
 
-
 type BinaryNode struct {
-    value int
-    left *BinaryNode
-    right *BinaryNode
+	value int
+	left  *BinaryNode
+	right *BinaryNode
 }
-
 
 func LinearSearch(haystack []int, needle int) bool {
 	for _, value := range haystack {
@@ -157,52 +155,92 @@ func QuickSort(array []int) {
 	qs(array, 0, len(array)-1)
 }
 
-
 func WalkBTPreOrder(current *BinaryNode, path *[]int) {
-    if current == nil {
-        return
-    }
-    // Pre order traversal
-    *path = append(*path, current.value) // 1. Visit node
-    WalkBTPreOrder(current.left, path) // 2. Walk left
-    WalkBTPreOrder(current.right, path) // 3. Walk right
+	if current == nil {
+		return
+	}
+	// Pre order traversal
+	*path = append(*path, current.value) // 1. Visit node
+	WalkBTPreOrder(current.left, path)   // 2. Walk left
+	WalkBTPreOrder(current.right, path)  // 3. Walk right
 }
 
 func PreOrderSearch(head *BinaryNode) []int {
-    path := make([]int, 0)
-    WalkBTPreOrder(head, &path)
-    return path
+	path := make([]int, 0)
+	WalkBTPreOrder(head, &path)
+	return path
 }
 
 func WalkBTInOrder(current *BinaryNode, path *[]int) {
-    if current == nil {
-        return
-    }
+	if current == nil {
+		return
+	}
 
-    // In order traversal
-    WalkBTInOrder(current.left, path) //  1. Walk left
-    *path = append(*path, current.value) // 2. Visit node
-    WalkBTInOrder(current.right, path) // 3. Walk right
+	// In order traversal
+	WalkBTInOrder(current.left, path)    //  1. Walk left
+	*path = append(*path, current.value) // 2. Visit node
+	WalkBTInOrder(current.right, path)   // 3. Walk right
 }
 
 func InOrderSearch(head *BinaryNode) []int {
-    path := make([]int, 0)
-    WalkBTInOrder(head, &path)
-    return path
+	path := make([]int, 0)
+	WalkBTInOrder(head, &path)
+	return path
 }
 func WalkBTPostOrder(current *BinaryNode, path *[]int) {
-    if current == nil {
-        return
-    }
+	if current == nil {
+		return
+	}
 
-    // Post order traversal
-    WalkBTPostOrder(current.left, path) // 1. Walk left
-    WalkBTPostOrder(current.right, path) // 2. Walk right
-    *path = append(*path, current.value) // 3. Visit node
+	// Post order traversal
+	WalkBTPostOrder(current.left, path)  // 1. Walk left
+	WalkBTPostOrder(current.right, path) // 2. Walk right
+	*path = append(*path, current.value) // 3. Visit node
 }
 
 func PostOrderSearch(head *BinaryNode) []int {
-    path := make([]int, 0)
-    WalkBTPostOrder(head, &path)
-    return path
+	path := make([]int, 0)
+	WalkBTPostOrder(head, &path)
+	return path
+}
+
+func BFS(head *BinaryNode, needle int) bool {
+	var q []*BinaryNode = []*BinaryNode{head}
+
+	for len(q) > 0 {
+		current := q[0]
+		q = q[1:] // Dequeue the front node
+
+		if current.value == needle {
+			return true
+		}
+
+		// Enqueue children nodes
+		if current.left != nil {
+			q = append(q, current.left)
+		}
+		if current.right != nil {
+			q = append(q, current.right)
+		}
+	}
+	return false
+}
+
+func CompareBT(a *BinaryNode, b *BinaryNode) bool {
+	// Structural check
+	if a == nil && b == nil {
+		return true
+	}
+
+	// Structural check
+	if a == nil || b == nil {
+		return false
+	}
+
+	// Value check
+	if a.value != b.value {
+		return false
+	}
+
+	return CompareBT(a.left, b.left) && CompareBT(a.right, b.right)
 }
