@@ -244,3 +244,19 @@ func CompareBT(a *BinaryNode, b *BinaryNode) bool {
 
 	return CompareBT(a.left, b.left) && CompareBT(a.right, b.right)
 }
+
+func SearchDFS(current *BinaryNode, needle int) bool {
+	if current == nil {
+		return false
+	} else if current.value == needle {
+		return true
+	} else if current.value < needle {
+		return SearchDFS(current.right, needle)
+	} else {
+		return SearchDFS(current.left, needle)
+	}
+}
+
+func DFS(head *BinaryNode, needle int) bool {
+	return SearchDFS(head, needle)
+}
