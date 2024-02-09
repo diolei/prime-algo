@@ -155,3 +155,55 @@ func TestInsertAt(t *testing.T) {
 		t.Errorf("Failed to insert at correct positions")
 	}
 }
+
+func TestMinHeapInsertAndDelete(t *testing.T) {
+	heap := &MinHeap{}
+
+	// Insert values
+	heap.Insert(3)
+	heap.Insert(2)
+	heap.Insert(15)
+	heap.Insert(5)
+	heap.Insert(4)
+	heap.Insert(45)
+
+	// Verify the root of the heap
+	if root := heap.data[0]; root != 2 {
+		t.Errorf("Expected root to be  2, got %d", root)
+	}
+
+	// Delete the root
+	deletedRoot := heap.Delete()
+	if deletedRoot != 2 {
+		t.Errorf("Expected deleted root to be  2, got %d", deletedRoot)
+	}
+
+	// Verify the new root after delete
+	if newRoot := heap.data[0]; newRoot != 3 {
+		t.Errorf("Expected new root to be  3, got %d", newRoot)
+	}
+}
+
+func TestMinHeapChildren(t *testing.T) {
+	heap := &MinHeap{}
+
+	// Insert values to form a valid heap structure
+	heap.Insert(10)
+	heap.Insert(20)
+	heap.Insert(30)
+	heap.Insert(40)
+	heap.Insert(50)
+
+	// Check Left Child of root
+	rootIndex := 0
+	leftChildIndex := heap.LeftChild(rootIndex)
+	if leftValue := heap.data[leftChildIndex]; leftValue != 20 {
+		t.Errorf("Expected left child of root to be  20, got %d", leftValue)
+	}
+
+	// Check Right Child of root
+	rightChildIndex := heap.RightChild(rootIndex)
+	if rightValue := heap.data[rightChildIndex]; rightValue != 30 {
+		t.Errorf("Expected right child of root to be  30, got %d", rightValue)
+	}
+}

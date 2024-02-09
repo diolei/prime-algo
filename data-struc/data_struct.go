@@ -1,6 +1,8 @@
 package datastruc
 
-import "errors"
+import (
+	"errors"
+)
 
 type Node struct {
 	value    int
@@ -26,9 +28,14 @@ type DoublyLinkedList struct {
 }
 
 type BinaryNode struct {
-    value int
-    left *BinaryNode
-    right *BinaryNode
+	value int
+	left  *BinaryNode
+	right *BinaryNode
+}
+
+type MinHeap struct {
+	length int
+	data   []int
 }
 
 func (q *Queue) PeekQueue() (int, error) {
@@ -181,4 +188,83 @@ func (d *DoublyLinkedList) Remove(data int) (int, error) {
 
 	current.next, current.previous = nil, nil
 	return current.value, nil
+}
+
+func (h *MinHeap) Insert(value int) {
+	if h.length == len(h.data) {
+		newSize := 2 * len(h.data)
+		if newSize == 0 {
+			newSize = 1
+		}
+		newData := make([]int, newSize)
+		copy(newData, h.data)
+		h.data = newData
+	}
+
+	h.data[h.length] = value
+	h.HeapifyUp(h.length)
+	h.length++
+}
+
+func (h *MinHeap) Delete() int {
+	if h.length == 0 {
+		return -1
+	}
+
+	out := h.data[0]
+	h.length--
+	h.data[0] = h.data[h.length]
+	h.HeapifyDown(0)
+
+	if cap(h.data)/2 > h.length {
+		newData := make([]int, h.length, h.length)
+		copy(newData, h.data[:h.length])
+		h.data = newData
+	}
+	return out
+}
+
+func (h *MinHeap) Parent(index int) int {
+	return ((index - 1) / 2)
+}
+
+func (h *MinHeap) LeftChild(index int) int {
+	return ((index * 2) + 1)
+}
+
+func (h *MinHeap) RightChild(index int) int {
+	return ((index * 2) + 2)
+}
+
+func (h *MinHeap) HeapifyDown(index int) {
+	for {
+		left := h.LeftChild(index)
+		right := h.RightChild(index)
+		smallest := index
+
+		if left < h.length && h.data[left] < h.data[smallest] {
+			smallest = left
+		}
+		if right < h.length && h.data[right] < h.data[smallest] {
+			smallest = right
+		}
+
+		if smallest != index {
+			h.data[index], h.data[smallest] = h.data[smallest], h.data[index]
+			index = smallest
+		} else {
+			break
+		}
+	}
+}
+
+func (h *MinHeap) HeapifyUp(index int) {
+	for index > 0 {
+		parent := h.Parent(index)
+		if h.data[parent] <= h.data[index] {
+			break
+		}
+		h.data[parent], h.data[index] = h.data[index], h.data[parent]
+		index = parent
+	}
 }
