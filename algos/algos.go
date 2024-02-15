@@ -15,6 +15,15 @@ type BinaryNode struct {
 	right *BinaryNode
 }
 
+type WeightedAdjacencyMatrix [][]int
+
+func reverse(arr []int) []int {
+	for i, j := 0, len(arr)-1; i < j; i, j = i+1, j-1 {
+		arr[i], arr[j] = arr[j], arr[i]
+	}
+	return arr
+}
+
 func LinearSearch(haystack []int, needle int) bool {
 	for _, value := range haystack {
 		if value == needle {
@@ -259,4 +268,52 @@ func SearchDFS(current *BinaryNode, needle int) bool {
 
 func DFS(head *BinaryNode, needle int) bool {
 	return SearchDFS(head, needle)
+}
+
+func MatrixBFS(graph *WeightedAdjacencyMatrix, source int, needle int) []int {
+	if source == needle {
+		return []int{source}
+	}
+
+	seen := make([]bool, len(*graph))
+	previous := make([]int, len(*graph))
+	for i := range previous {
+		previous[i] = -1
+	}
+
+	seen[source] = true
+	q := make([]int, 0)
+	q = append(q, source)
+
+	for len(q) != 0 {
+		current := q[0]
+		q = q[1:]
+
+		if current == needle {
+			break
+		}
+
+		adj := (*graph)[current]
+		for i := 0; i < len(adj); i++ {
+			if adj[i] == 0 || seen[i] {
+				continue
+			}
+			seen[i] = true
+			previous[i] = current
+			q = append(q, i)
+		}
+	}
+
+	if previous[needle] == -1 {
+		return nil
+	}
+
+	out := make([]int, 0)
+	current := needle
+	for current != -1 {
+		out = append([]int{current}, out...)
+		current = previous[current]
+	}
+
+	return out
 }

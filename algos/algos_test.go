@@ -299,3 +299,83 @@ func TestDFS(t *testing.T) {
 		}
 	})
 }
+
+func TestMatrixBFS(t *testing.T) {
+	tests := []struct {
+		name         string
+		graph        WeightedAdjacencyMatrix
+		source       int
+		needle       int
+		expectedPath []int
+	}{
+		{
+			name: "Direct Path",
+			graph: WeightedAdjacencyMatrix{
+				{0, 1, 0, 0},
+				{0, 0, 1, 0},
+				{0, 0, 0, 1},
+				{0, 0, 0, 0},
+			},
+			source:       0,
+			needle:       2,
+			expectedPath: []int{0, 1, 2},
+		},
+		{
+			name: "No Path",
+			graph: WeightedAdjacencyMatrix{
+				{0, 0, 0, 0},
+				{0, 0, 0, 0},
+				{0, 0, 0, 0},
+				{0, 0, 0, 0},
+			},
+			source:       0,
+			needle:       2,
+			expectedPath: nil,
+		},
+		{
+			name: "Self Loop",
+			graph: WeightedAdjacencyMatrix{
+				{0, 1, 0, 0},
+				{0, 0, 0, 0},
+				{0, 0, 0, 0},
+				{0, 0, 0, 0},
+			},
+			source:       0,
+			needle:       0,
+			expectedPath: []int{0},
+		},
+		{
+			name: "Indirect Path",
+			graph: WeightedAdjacencyMatrix{
+				{0, 1, 0, 0},
+				{0, 0, 1, 0},
+				{0, 0, 0, 1},
+				{0, 0, 0, 0},
+			},
+			source:       0,
+			needle:       3,
+			expectedPath: []int{0, 1, 2, 3},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			path := MatrixBFS(&tt.graph, tt.source, tt.needle)
+			if !equalIntSlices(path, tt.expectedPath) {
+				t.Errorf("MatrixBFS = %v, expected %v", path, tt.expectedPath)
+			}
+		})
+	}
+}
+
+func equalIntSlices(a, b []int) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i, v := range a {
+		if v != b[i] {
+			return false
+		}
+	}
+	return true
+}
