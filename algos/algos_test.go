@@ -379,3 +379,25 @@ func equalIntSlices(a, b []int) bool {
 	}
 	return true
 }
+
+func TestMatrixDFS(t *testing.T) {
+	graph := WeightedAdjacencyList{
+		{{to: 1, weight: 1}, {to: 2, weight: 2}},
+		{{to: 3, weight: 3}},
+		{{to: 4, weight: 4}},
+		{{to: 5, weight: 5}},
+		{{to: 6, weight: 6}},
+		{{to: 7, weight: 7}},
+		{},
+	}
+
+	source := 0
+	needle := 5
+
+	path := MatrixDFS(&graph, source, needle)
+	if path == nil {
+		t.Errorf("Expected a non-nil path, but got nil")
+	} else {
+		t.Logf("Found path: %v", path)
+	}
+}

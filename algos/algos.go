@@ -17,6 +17,13 @@ type BinaryNode struct {
 
 type WeightedAdjacencyMatrix [][]int
 
+type GraphEdge struct {
+	to     int
+	weight int
+}
+
+type WeightedAdjacencyList [][]GraphEdge
+
 func reverse(arr []int) []int {
 	for i, j := 0, len(arr)-1; i < j; i, j = i+1, j-1 {
 		arr[i], arr[j] = arr[j], arr[i]
@@ -316,4 +323,47 @@ func MatrixBFS(graph *WeightedAdjacencyMatrix, source int, needle int) []int {
 	}
 
 	return out
+}
+
+func WalkMatrixDFS(graph *WeightedAdjacencyList, current int, needle int, seen []bool, path *[]int) bool {
+
+	if seen[current] {
+		return false
+	}
+
+	seen[current] = true
+
+	// Pre
+	*path = append(*path, current)
+
+	if current == needle {
+		return true
+	}
+
+	// Recurse
+	list := (*graph)[current]
+	for i := 0; i < len(list); i++ {
+		edge := list[i]
+		if WalkMatrixDFS(graph, edge.to, needle, seen, path) {
+			return true
+		}
+	}
+
+	// Post
+	*path = (*path)[:len(*path)-1]
+
+	return false
+}
+
+func MatrixDFS(graph *WeightedAdjacencyList, source int, needle int) []int {
+	seen := make([]bool, len(*graph))
+	path := new([]int)
+
+	WalkMatrixDFS(graph, source, needle, seen, path)
+
+	if len(*path) == 0 {
+		return nil
+	}
+
+	return *path
 }
