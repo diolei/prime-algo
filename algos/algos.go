@@ -367,3 +367,71 @@ func MatrixDFS(graph *WeightedAdjacencyList, source int, needle int) []int {
 
 	return *path
 }
+
+func hasUnvisited(seen []bool, distances []int) bool {
+	for i, s := range seen {
+		if !s && distances[i] < int(math.Inf(1)) {
+			return true
+		}
+	}
+	return false
+}
+
+func getLowestUnvisited(seen []bool, distances []int) int {
+	index := -1
+	lowest_distance := int(math.Inf(1))
+
+	for i := 0; i < len(seen); i++ {
+		if seen[i] == true {
+			continue
+		}
+
+		if lowest_distance > distances[i] {
+			lowest_distance = distances[i]
+			index = i
+		}
+
+	}
+	return index
+}
+
+func Dijkstra(source int, sink int, array *WeightedAdjacencyList) []int {
+	seen := make([]bool, len(*array))
+	distances := make([]int, len(*array))
+	previous := make([]int, len(*array))
+	for i := range distances {
+		distances[i] = int(math.Inf(1))
+	}
+
+	for i := range previous {
+		distances[i] = -1
+	}
+
+	distances[source] = 0
+
+	for hasUnvisited(seen, distances) {
+		current := getLowestUnvisited(seen, distances)
+		seen[current] = true
+
+		adj := (*array)[current]
+		for i := 0; i < len(adj); i++ {
+			edge := adj[i]
+			if seen[edge.to] {
+				continue
+			}
+			distance := distances[current] + edge.weight
+			if distance < distances[edge.to] {
+				distances[edge.to] = distance
+				previous[edge.to] = current
+			}
+		}
+
+	}
+	out := make([]int, 0)
+	current := sink
+	for current != -1 {
+		out = append([]int{current}, out...)
+		current = previous[current]
+	}
+	return out
+}
