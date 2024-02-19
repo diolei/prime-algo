@@ -268,3 +268,116 @@ func (h *MinHeap) HeapifyUp(index int) {
 		index = parent
 	}
 }
+
+type LRUNode struct {
+	value interface{}
+	next  *LRUNode
+	prev  *LRUNode
+}
+
+type LRU struct {
+	length        int
+	head          *LRUNode
+	tail          *LRUNode
+	lookup        map[interface{}]*LRUNode
+	reverseLookup map[*LRUNode]interface{}
+	capacity      int
+}
+
+func createNodeLRU(value interface{}) *LRUNode {
+	return &LRUNode{value: value}
+}
+
+func NewLRU(capacity int) *LRU {
+	lru := &LRU{
+		length:        0,
+		head:          nil,
+		tail:          nil,
+		lookup:        make(map[interface{}]*LRUNode),
+		reverseLookup: make(map[*LRUNode]interface{}),
+		capacity:      capacity,
+	}
+	return lru
+}
+
+func (lru *LRU) UpdateLRU(key interface{}, value interface{}) {
+	// Check existence
+	// If not in cache, insert it:
+	// - Check capacity and evict if full
+	// Otherwise, update to front of list
+	// Update value
+	node, exists := lru.lookup[key]
+	if !exists {
+		node = createNodeLRU(value)
+		lru.length++
+		lru.prepend(node)
+		lru.trimCache()
+
+		lru.lookup[key] = node
+		lru.reverseLookup[node] = key
+	} else {
+		lru.detach(node)
+		lru.prepend(node)
+		node.value = value
+	}
+
+}
+
+func (lru *LRU) GetLRU(key interface{}) interface{} {
+	// Check the cache for existence
+	node, exists := lru.lookup[key]
+	if !exists {
+		return nil
+	}
+
+	// Update found value and move it to front
+	lru.detach(node)
+	lru.prepend(node)
+
+	// Return found value or nil if it doesn't exist
+	return node.value
+}
+
+func (lru *LRU) detach(node *LRUNode) {
+	if node.prev != nil {
+		node.prev.next = node.next
+	}
+
+	if node.next != nil {
+		node.next.prev = node.prev
+	}
+
+	if lru.head == node {
+		lru.head = lru.head.next
+	}
+	if lru.tail == node {
+		lru.tail = lru.tail.prev
+	}
+
+	node.next, node.prev = nil, nil
+}
+
+func (lru *LRU) prepend(node *LRUNode) {
+	if lru.head == nil {
+		lru.head, lru.tail = node, node
+		return
+	}
+
+	node.next = lru.head
+	lru.head.prev = node
+	lru.head = node
+}
+
+func (lru *LRU) trimCache() {
+	if lru.length <= lru.capacity {
+		return
+	}
+
+	tmp_tail := lru.tail
+	lru.detach(tmp_tail)
+
+	key := lru.reverseLookup[tmp_tail]
+	delete(lru.lookup, key)
+	delete(lru.reverseLookup, tmp_tail)
+	lru.length--
+}

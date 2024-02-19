@@ -207,3 +207,47 @@ func TestMinHeapChildren(t *testing.T) {
 		t.Errorf("Expected right child of root to be  30, got %d", rightValue)
 	}
 }
+
+func TestLRU(t *testing.T) {
+	lru := NewLRU(3)
+
+	if lru.GetLRU("foo") != nil {
+		t.Error("Expected nil")
+	}
+	lru.UpdateLRU("foo", 69)
+	if lru.GetLRU("foo") != 69 {
+		t.Error("Expected 69")
+	}
+
+	lru.UpdateLRU("bar", 420)
+	if lru.GetLRU("bar") != 420 {
+		t.Error("Expected 420")
+	}
+
+	lru.UpdateLRU("baz", 1337)
+	if lru.GetLRU("baz") != 1337 {
+		t.Error("Expected 1337")
+	}
+
+	lru.UpdateLRU("ball", 69420)
+	if lru.GetLRU("ball") != 69420 {
+		t.Error("Expected 69420")
+	}
+	if lru.GetLRU("foo") != nil {
+		t.Error("Expected nil")
+	}
+	if lru.GetLRU("bar") != 420 {
+		t.Error("Expected 420")
+	}
+	lru.UpdateLRU("foo", 69)
+	if lru.GetLRU("bar") != 420 {
+		t.Error("Expected 420")
+	}
+	if lru.GetLRU("foo") != 69 {
+		t.Error("Expected 69")
+	}
+
+	if lru.GetLRU("baz") != nil {
+		t.Error("Expected nil")
+	}
+}
